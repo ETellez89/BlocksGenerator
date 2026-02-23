@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blocks Generator 🧪</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            background: #008A22;
+            color: white;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #006e1b;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-clean {
+            background: #dc3545;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .btn-clean:hover {
+            background: #c82333;
+        }
+
+        select {
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .block-container {
+            background: white;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border: 1px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .block-header {
+            background: #e9ecef;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .block-title {
+            font-weight: bold;
+            color: #333;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn-icon {
+            border: none;
+            background: #ddd;
+            color: #333;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .btn-icon:hover {
+            background: #ccc;
+        }
+
+        .btn-hide {
+            background: #e2e6ea;
+        }
+
+        .btn-hide.hidden-state {
+            background: #ffcccc;
+            color: #cc0000;
+        }
+
+        .btn-popup {
+            background: #bebebe;
+            color: #000000;
+        }
+
+        .btn-copy-small {
+            background: #53a0fd;
+            color: white;
+            border-radius: 4px;
+            padding: 0 15px;
+            width: auto;
+            font-size: 12px;
+            height: 32px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .zoom-select {
+            padding: 5px;
+            height: 32px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .block-body {
+            display: flex;
+            flex-wrap: wrap;
+            height: auto;
+            transition: height 0.3s ease;
+        }
+
+        .block-body.collapsed {
+            display: none;
+        }
+
+        .preview-pane {
+            flex: 1;
+            padding: 20px;
+            min-width: 350px;
+            border-right: 1px solid #eee;
+            background: #ffffff;
+            overflow-x: auto;
+        }
+
+        .code-pane {
+            flex: 1;
+            padding: 0;
+            min-width: 350px;
+            background: #282c34;
+            position: relative;
+            transition: background 0.3s;
+        }
+
+        /* --- ESTILOS DE TEMA PARA CÓDIGO --- */
+        textarea {
+            width: 100%;
+            height: 100%;
+            min-height: 300px;
+            background: transparent;
+            color: #abb2bf;
+            border: none;
+            padding: 15px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            resize: vertical;
+            box-sizing: border-box;
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            outline: none;
+            transition: font-size 0.2s, color 0.3s;
+        }
+
+        /* Clase para Light Mode en el área de código */
+        .light-code-theme {
+            background: #ffffff !important;
+            border-left: 1px solid #ddd;
+        }
+
+        .light-code-theme textarea {
+            color: #24292e !important;
+        }
+
+        /* --- POPUP --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            width: 95%;
+            height: 95%;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+            background: #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            flex-shrink: 0;
+        }
+
+        .modal-title {
+            font-weight: bold;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn-close {
+            background: #ff4d4d;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 5px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .modal-body {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .modal-preview {
+            width: 50%;
+            padding: 20px;
+            overflow-y: auto;
+            background: white;
+        }
+
+        .modal-code {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #282c34;
+            min-width: 200px;
+            transition: background 0.3s;
+        }
+
+        .modal-code textarea {
+            flex: 1;
+            min-height: 0;
+            resize: none;
+            border: none;
+            font-size: 14px;
+        }
+
+        /* --- RESIZER --- */
+        .resizer {
+            width: 13px;
+            background: #ddd;
+            cursor: col-resize;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-left: 1px solid #ccc;
+            border-right: 1px solid #ccc;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .resizer:hover,
+        .resizer.resizing {
+            background: #bbb;
+        }
+
+        .resizer::after {
+            content: "|||";
+            color: #666;
+            font-size: 10px;
+            letter-spacing: 2px;
+        }
+
+        /* Estilos Email */
+        .imghide {
+            max-height: 0px;
+            font-size: 0;
+            display: none;
+            overflow: hidden;
+        }
+
+        .em_img {
+            display: block;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        @media only screen and (max-width: 480px) {
+            .imghide {
+                max-height: none !important;
+                font-size: 12px !important;
+                display: block !important;
+                overflow: visible !important;
+            }
+
+            .em_img {
+                width: 100% !important;
+                height: auto !important;
+            }
+
+            .em_hide {
+                display: none !important;
+            }
+        }
+
+        .main-workspace {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        #outputArea {
+            flex: 1;
+            min-width: 0;
+            transition: width 0.3s;
+        }
+
+        #fullHtmlContainer {
+            display: none;
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+            overflow: hidden;
+            position: sticky;
+            top: 20px;
+            height: 85vh;
+            flex-direction: column;
+        }
+
+        .btn-full {
+            background: #6f42c1;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .btn-full:hover {
+            background: #5a32a3;
+        }
+
+        .full-header {
+            background: #6f42c1;
+            color: white;
+            padding: 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .full-body {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .full-code-pane {
+            flex: 1;
+            background: #282c34;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .full-code-pane textarea {
+            height: 100%;
+            border-radius: 0;
+            padding: 20px;
+        }
+
+
+        .full-body {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .full-code-pane {
+            flex: 1;
+            background: #282c34;
+            position: relative;
+            min-height: 100px;
+        }
+
+        .full-visual-pane {
+            flex: 1;
+            background: #ffffff;
+            position: relative;
+            border-top: 1px solid #ddd;
+            min-height: 100px;
+        }
+
+        #htmlPreviewFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        .resizer-vertical {
+            height: 12px;
+            background: #e9ecef;
+            cursor: row-resize;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-top: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .resizer-vertical:hover,
+        .resizer-vertical.resizing {
+            background: #d0d0d0;
+        }
+
+        .resizer-vertical::after {
+            content: "•••";
+            color: #666;
+            font-size: 14px;
+            letter-spacing: 3px;
+            margin-top: -4px;
+        }
+
+        .main-workspace {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            height: calc(100vh - 150px);
+        }
+
+        #outputArea {
+            flex: 1;
+            min-width: 0;
+            overflow-y: auto;
+            height: 100%;
+            padding-right: 5px;
+        }
+
+        #fullHtmlContainer {
+            display: none;
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+            flex-direction: column;
+            height: 100%;
+            position: sticky;
+            top: 20px;
+            overflow: hidden;
+        }
+
+        .full-header {
+            background: #6f42c1;
+            color: white;
+            padding: 10px 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .btn-full {
+            background: #6f42c1;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .btn-full:hover {
+            background: #5a32a3;
+        }
+
+        .full-body {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+
+
+        .full-code-pane {
+            height: 50%;
+            /* Inicial */
+            background: #282c34;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .full-code-pane textarea {
+            flex: 1;
+            border: none;
+            padding: 15px;
+            font-size: 13px;
+            resize: none;
+        }
+
+
+        .resizer-vertical {
+            height: 12px;
+            background: #f1f1f1;
+            border-top: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
+            cursor: row-resize;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        .resizer-vertical:hover,
+        .resizer-vertical.resizing {
+            background: #e0e0e0;
+        }
+
+        .resizer-vertical::after {
+            content: "•••";
+            color: #999;
+            letter-spacing: 2px;
+            margin-top: -3px;
+            font-size: 10px;
+        }
+
+        .full-visual-pane {
+            flex: 1;
+            background: #ffffff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #htmlPreviewFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🛠️ Blocks Generator 📎</h1>
+
+    <div class="controls">
+        <div>
+            <label><strong>1. Upload CSV:</strong></label>
+            <input type="file" id="csvInput" accept=".csv" onchange="parseHeaders()">
+        </div>
+        <div id="countryWrapper" style="display:none;">
+            <label><strong>2. Country/Language:</strong></label>
+            <select id="countrySelector"></select>
+        </div>
+        <div>
+            <label><strong>3. Sintax:</strong></label>
+            <select id="syntaxSelector">
+                <option value="ampscript">AMPScript</option>
+                <option value="jinja">Jinja</option>
+            </select>
+        </div>
+        <!-- CONTROLES GENERALES -->
+        <div id="generalControls"
+            style="display:flex; gap:10px; align-items:center; border-left:1px solid #ddd; padding-left:15px;">
+            <label><strong>General:</strong></label>
+            <select class="zoom-select" onchange="applyGeneralZoom(this.value)">
+                <option value="12">x1</option>
+                <option value="14">x2</option>
+                <option value="16">x3</option>
+                <option value="20">x4</option>
+            </select>
+            <button class="btn-icon" onclick="applyGeneralTheme(this)" title="Cambiar Tema General">💡</button>
+        </div>
+        <div style="display:flex; gap:10px;">
+            <button class="btn" id="genBtn" onclick="generateContent()" disabled>Generate Blocks</button>
+            <button class="btn btn-clean" onclick="cleanAll()">Clean 🗑️</button>
+            <button class="btn btn-full" onclick="generateFullHTML()">Generate Full HTML 🚀</button>
+        </div>
+    </div>
+    <div class="main-workspace">
+
+        <div class="main-workspace">
+
+            <div id="outputArea"></div>
+
+            <div id="fullHtmlContainer">
+                <div class="full-header">
+                    <span>Full HTML & Preview</span>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn btn-copy-small" onclick="copyFullCode()"
+                            style="background:white; color:#6f42c1;">Copy All</button>
+                        <button class="btn-close" onclick="closeFullView()"
+                            style="background:transparent; border:1px solid white;">✕</button>
+                    </div>
+                </div>
+
+                <div class="full-body" id="fullBodyGroup">
+                    <div class="full-code-pane" id="topPane">
+                        <textarea id="fullHtmlTextarea" oninput="updateFullPreview()"></textarea>
+                    </div>
+
+                    <div class="resizer-vertical" id="dragHandleVertical"></div>
+
+                    <div class="full-visual-pane" id="bottomPane">
+                        <iframe id="htmlPreviewFrame"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="fullHtmlContainer">
+            <div class="full-header">
+                <span>Full HTML & Preview</span>
+                <div>
+                    <button class="btn btn-copy-small" onclick="copyFullCode()"
+                        style="background:white; color:#6f42c1;">Copy All</button>
+                    <button class="btn-close" onclick="closeFullView()"
+                        style="background:transparent; border:1px solid white;">✕</button>
+                </div>
+            </div>
+
+            <div class="full-body" id="fullBodyGroup">
+                <div class="full-code-pane" id="topPane">
+                    <textarea id="fullHtmlTextarea" oninput="updateFullPreview()"></textarea>
+                </div>
+
+                <div class="resizer-vertical" id="dragHandleVertical"></div>
+
+                <div class="full-visual-pane" id="bottomPane">
+                    <iframe id="htmlPreviewFrame"></iframe>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="popupModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">Name of the Block </div>
+                <div class="modal-actions">
+                    <select class="zoom-select" onchange="changeZoom(this, 'modalTextarea')">
+                        <option value="12">x1</option>
+                        <option value="14" selected>x2</option>
+                        <option value="16">x3</option>
+                        <option value="18">x4</option>
+                        <option value="20">x5</option>
+                        <option value="24">x6</option>
+                    </select>
+                    <button class="btn-icon" id="modalThemeBtn" onclick="toggleModalTheme()"
+                        title="Cambiar Tema">💡</button>
+                    <button class="btn btn-copy-small" onclick="copyFromModal()">Copy Code</button>
+                    <button class="btn-close" onclick="closeModal()">✕</button>
+                </div>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <div class="modal-preview" id="modalPreview"></div>
+                <div class="resizer" id="dragHandle"></div>
+                <div class="modal-code" id="modalCodePane">
+                    <textarea id="modalTextarea" oninput="syncFromModal()"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let rawRows = [];
+        let csvData = {};
+        let currentEditingId = null;
+        let isGlobalLight = false;
+
+        const logicMap = {
+            'New': { amp: 'MERCHANT_TYPE == "New"', jinja: 'MERCHANT_TYPE == "New"' },
+            'Inactive': { amp: 'MERCHANT_TYPE == "Inactive"', jinja: 'MERCHANT_TYPE == "Inactive"' },
+            'Active': { amp: 'MERCHANT_TYPE == "Active"', jinja: 'MERCHANT_TYPE == "Active"' },
+            'Beauty': { amp: 'CATEGORY_V3 == "Beauty / Wellness / Healthcare"', jinja: 'CATEGORY_V3 == "Beauty / Wellness / Healthcare"' },
+            'Food': { amp: 'CATEGORY_V3 == "Food & Drink"', jinja: 'CATEGORY_V3 == "Food & Drink"' },
+            'Leisure': { amp: 'CATEGORY_V3 == "Leisure Offers / Activities"', jinja: 'CATEGORY_V3 == "Leisure Offers / Activities"' },
+            'Services': { amp: 'CATEGORY_V3 == "Services"', jinja: 'CATEGORY_V3 == "Services"' },
+            'RepOwned': { amp: 'not empty(ACCOUNT_OWNER_NAME) and ACCOUNT_OWNER_NAME != "House Account" and IndexOf(ACCOUNT_OWNER_NAME,"Merchant") == 0', jinja: 'ACCOUNT_OWNER_NAME and ACCOUNT_OWNER_NAME != "House Account" and "Merchant" not in ACCOUNT_OWNER_NAME' },
+            'NoRepOwned': { amp: 'empty(ACCOUNT_OWNER_NAME) or ACCOUNT_OWNER_NAME == "House Account" or IndexOf(ACCOUNT_OWNER_NAME,"Merchant") > 0', jinja: 'not ACCOUNT_OWNER_NAME or ACCOUNT_OWNER_NAME == "House Account" or "Merchant" in ACCOUNT_OWNER_NAME' }
+        };
+
+        function cleanAll() {
+            document.getElementById('outputArea').innerHTML = "";
+            document.getElementById('csvInput').value = "";
+            document.getElementById('countryWrapper').style.display = "none";
+            document.getElementById('countrySelector').innerHTML = "";
+            document.getElementById('genBtn').disabled = true;
+
+            rawRows = [];
+            csvData = {};
+
+            document.getElementById('fullHtmlContainer').style.display = 'none';
+            document.getElementById('fullHtmlTextarea').value = "";
+            const iframe = document.getElementById('htmlPreviewFrame');
+            const doc = iframe.contentDocument || iframe.contentWindow.document;
+            doc.open();
+            doc.write("");
+            doc.close();
+        }
+
+        function parseHeaders() {
+            const fileInput = document.getElementById('csvInput');
+            if (!fileInput.files.length) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const text = e.target.result;
+                if (!text.trim()) { alert("Archivo vacío."); return; }
+                const firstLine = text.split('\n')[0];
+                const commas = (firstLine.match(/,/g) || []).length;
+                const semis = (firstLine.match(/;/g) || []).length;
+                const tabs = (firstLine.match(/\t/g) || []).length;
+                let separator = ',';
+                if (semis > commas && semis > tabs) separator = ';';
+                if (tabs > commas && tabs > semis) separator = '\t';
+
+                rawRows = [];
+                let currentRow = [];
+                let currentVal = '';
+                let insideQuote = false;
+                for (let i = 0; i < text.length; i++) {
+                    const char = text[i];
+                    const nextChar = text[i + 1];
+                    if (char === '"') {
+                        if (insideQuote && nextChar === '"') { currentVal += '"'; i++; }
+                        else { insideQuote = !insideQuote; }
+                    } else if (char === separator && !insideQuote) {
+                        currentRow.push(currentVal.trim()); currentVal = '';
+                    } else if ((char === '\r' || char === '\n') && !insideQuote) {
+                        if (currentVal || currentRow.length > 0) { currentRow.push(currentVal.trim()); rawRows.push(currentRow); }
+                        currentRow = []; currentVal = '';
+                        if (char === '\r' && nextChar === '\n') i++;
+                    } else { currentVal += char; }
+                }
+                if (currentVal || currentRow.length > 0) { currentRow.push(currentVal.trim()); rawRows.push(currentRow); }
+                const headers = rawRows[0];
+                if (!headers || headers.length < 2) { alert(`Error: No se detectaron columnas.`); return; }
+                const select = document.getElementById('countrySelector');
+                select.innerHTML = "";
+                for (let i = 1; i < headers.length; i++) {
+                    if (headers[i]) {
+                        const opt = document.createElement('option');
+                        opt.value = i; opt.text = headers[i]; select.appendChild(opt);
+                    }
+                }
+                document.getElementById('countryWrapper').style.display = 'block';
+                document.getElementById('genBtn').disabled = false;
+            };
+            reader.readAsText(fileInput.files[0]);
+        }
+
+        function generateContent() {
+            const colIndex = parseInt(document.getElementById('countrySelector').value);
+            const syntax = document.getElementById('syntaxSelector').value;
+            csvData = {};
+            for (let i = 1; i < rawRows.length; i++) {
+                const row = rawRows[i];
+                if (row.length > 0 && row[0]) {
+                    const key = row[0].trim();
+                    const val = row[colIndex] || "";
+                    if (key) csvData[key] = val;
+                }
+            }
+            document.getElementById('outputArea').innerHTML = "";
+            buildBlocks(syntax);
+        }
+
+        function buildBlocks(syntax) {
+            createBlock("Subject Line", generateSmartTextLogic(syntax, 'Subject'));
+            createBlock("Preheader", csvData['Preheader'] || "");
+            const headerCode = generateSmartImageLogic(syntax, 'Header_Img');
+            createBlock("Header Banner IMG", wrapInImageTable(headerCode, "0px", "15px"));
+            if (csvData['P1_Intro_Static']) createBlock("P1_Intro_Static", wrapInTable(csvData['P1_Intro_Static']));
+            createBlock("Paragraph 1", wrapInTable(generateSmartTextLogic(syntax, 'P1')));
+            createBlock("CTA 1", generateSmartCTALogic(syntax, 'CTA_Link'));
+            createBlock("Paragraph 2", wrapInTable(generateSmartTextLogic(syntax, 'P2')));
+            const mainCode = generateSmartImageLogic(syntax, 'MainBanner_Img');
+            createBlock("Main Banner IMG", wrapInImageTable(mainCode, "20px", "20px"));
+            createBlock("Bullets Block", generateBulletsLogic());
+            createBlock("CTA 2", generateSmartCTALogic(syntax, 'CTA2_Link'));
+            createBlock("Closing", wrapInTable(csvData['Closing_Text'] || ""));
+            createBlock("Signature", wrapInTable(csvData['Signature_Copy'] || ""));
+
+        }
+
+        function applyGeneralZoom(val) {
+            const selects = document.querySelectorAll('.zoom-select');
+            selects.forEach(s => s.value = val);
+            const textareas = document.querySelectorAll('.code-pane textarea');
+            textareas.forEach(t => t.style.fontSize = val + "px");
+        }
+
+        function applyGeneralTheme(btn) {
+            isGlobalLight = !isGlobalLight;
+            const panes = document.querySelectorAll('.code-pane');
+            const buttons = document.querySelectorAll('.btn-theme-toggle');
+
+            panes.forEach(p => isGlobalLight ? p.classList.add('light-code-theme') : p.classList.remove('light-code-theme'));
+
+            buttons.forEach(b => b.innerHTML = isGlobalLight ? "💡" : "🌑");
+
+            btn.innerHTML = isGlobalLight ? "💡" : "🌑";
+        }
+
+        function toggleIndividualTheme(btn, paneId) {
+            const pane = document.getElementById(paneId);
+            pane.classList.toggle('light-code-theme');
+            btn.innerHTML = pane.classList.contains('light-code-theme') ? "💡" : "🌑";
+        }
+
+        function toggleModalTheme() {
+            const pane = document.getElementById('modalCodePane');
+            const btn = document.getElementById('modalThemeBtn');
+            pane.classList.toggle('light-code-theme');
+            btn.innerHTML = pane.classList.contains('light-code-theme') ? "💡" : "🌑";
+        }
+
+        function createBlock(title, codeContent) {
+            const blockId = 'blk-' + Math.random().toString(36).substr(2, 9);
+            const previewHTML = cleanCodeForPreview(codeContent);
+            const isEmpty = codeContent.trim() === "" || codeContent.includes("<!-- No images provided -->");
+            const btnHideClass = isEmpty ? "btn-icon btn-hide hidden-state" : "btn-icon btn-hide";
+            const bodyClass = isEmpty ? "block-body collapsed" : "block-body";
+            const eyeIcon = isEmpty ? "🚫" : "⭕";
+
+            const themeClass = isGlobalLight ? "code-pane light-code-theme" : "code-pane";
+            const lightIcon = isGlobalLight ? "💡" : "🌑";
+
+            const html = `
+            <div class="block-container" id="container-${blockId}">
+                <div class="block-header">
+                    <div class="block-title">
+                        <button class="${btnHideClass}" id="btn-hide-${blockId}" onclick="toggleBlock('${blockId}')">${eyeIcon}</button>
+                        <span>${title}</span>
+                    </div>
+                    <div class="header-actions">
+                        <select class="zoom-select" onchange="changeZoom(this, 'textarea-${blockId}')">
+                            <option value="12">x1</option>
+                            <option value="14">x2</option>
+                            <option value="16">x3</option>
+                            <option value="20">x4</option>
+                        </select>
+                        <button class="btn-icon btn-theme-toggle" onclick="toggleIndividualTheme(this, 'pane-${blockId}')">${lightIcon}</button>
+                        <button class="btn-icon btn-popup" onclick="openModal('${blockId}', '${title}')">⤢</button>
+                        <button class="btn btn-copy-small" onclick="copyToClipboard('${blockId}')">Copiar</button>
+                    </div>
+                </div>
+                <div class="${bodyClass}" id="body-${blockId}">
+                    <div class="preview-pane" id="preview-${blockId}">${previewHTML}</div>
+                    <div class="${themeClass}" id="pane-${blockId}">
+                        <textarea id="textarea-${blockId}" oninput="syncFromInline('${blockId}')">${codeContent}</textarea>
+                    </div>
+                </div>
+            </div>`;
+            document.getElementById('outputArea').insertAdjacentHTML('beforeend', html);
+        }
+
+        function toggleBlock(id) {
+            const body = document.getElementById(`body-${id}`);
+            const btn = document.getElementById(`btn-hide-${id}`);
+            if (body.classList.contains('collapsed')) {
+                body.classList.remove('collapsed'); btn.innerHTML = "⭕";
+            } else {
+                body.classList.add('collapsed'); btn.innerHTML = "🚫";
+            }
+        }
+        function changeZoom(selectElem, targetId) {
+            document.getElementById(targetId).style.fontSize = selectElem.value + "px";
+        }
+        function syncFromInline(id) {
+            const code = document.getElementById(`textarea-${id}`).value;
+            document.getElementById(`preview-${id}`).innerHTML = cleanCodeForPreview(code);
+        }
+        function openModal(id, title) {
+            currentEditingId = id;
+            const code = document.getElementById(`textarea-${id}`).value;
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalTextarea').value = code;
+            document.getElementById('modalPreview').innerHTML = cleanCodeForPreview(code);
+
+            const isLight = document.getElementById(`pane-${id}`).classList.contains('light-code-theme');
+            const modalPane = document.getElementById('modalCodePane');
+            isLight ? modalPane.classList.add('light-code-theme') : modalPane.classList.remove('light-code-theme');
+            document.getElementById('modalThemeBtn').innerHTML = isLight ? "💡" : "🌑";
+
+            document.getElementById('popupModal').style.display = 'flex';
+        }
+        function closeModal() {
+            document.getElementById('popupModal').style.display = 'none';
+            currentEditingId = null;
+        }
+        function syncFromModal() {
+            if (!currentEditingId) return;
+            const newCode = document.getElementById('modalTextarea').value;
+            document.getElementById('modalPreview').innerHTML = cleanCodeForPreview(newCode);
+            document.getElementById(`textarea-${currentEditingId}`).value = newCode;
+            document.getElementById(`preview-${currentEditingId}`).innerHTML = cleanCodeForPreview(newCode);
+        }
+        function copyFromModal() {
+            navigator.clipboard.writeText(document.getElementById('modalTextarea').value).then(() => alert("Copiado!"));
+        }
+        function cleanCodeForPreview(code) {
+            return code.replace(/%%\[.*?\]%%/gs, '').replace(/{% .*? %}/gs, '').replace(/<!--.*?-->/gs, '');
+        }
+        function copyToClipboard(id) {
+            navigator.clipboard.writeText(document.getElementById(`textarea-${id}`).value).then(() => alert("Copiado!"));
+        }
+
+        const handle = document.getElementById('dragHandle');
+        const modalBody = document.getElementById('modalBody');
+        const leftPane = document.getElementById('modalPreview');
+        let isResizing = false;
+        handle.addEventListener('mousedown', () => { isResizing = true; document.body.style.cursor = 'col-resize'; });
+        document.addEventListener('mousemove', (e) => {
+            if (!isResizing) return;
+            const containerRect = modalBody.getBoundingClientRect();
+            let newLeftWidth = e.clientX - containerRect.left;
+            if (newLeftWidth < 100) newLeftWidth = 100;
+            if (newLeftWidth > containerRect.width - 100) newLeftWidth = containerRect.width - 100;
+            leftPane.style.width = newLeftWidth + 'px';
+        });
+        document.addEventListener('mouseup', () => { isResizing = false; document.body.style.cursor = 'default'; });
+
+        function generateSmartTextLogic(syntax, prefix) {
+            const keys = Object.keys(csvData).filter(k => k.startsWith(prefix + '_'));
+            const baseContent = (prefix === 'P1') ? (csvData['P1'] || "") : (csvData[prefix] || "");
+            if (keys.length === 0) return baseContent;
+            let logicBuffer = ""; let elseContent = ""; let isFirst = true; keys.sort();
+            keys.forEach(key => {
+                if (key === 'P1_Intro_Static') return;
+                const val = csvData[key]; if (!val) return;
+                let matchedSuffix = null;
+                for (let suf in logicMap) { if (key.endsWith('_' + suf) || key.includes('_' + suf + '_')) { matchedSuffix = suf; break; } }
+                if (key.endsWith('_Else') || key.endsWith('_Default')) { elseContent = val; }
+                else if (matchedSuffix) {
+                    const condition = logicMap[matchedSuffix][syntax === 'ampscript' ? 'amp' : 'jinja'];
+                    const openTag = (syntax === 'ampscript') ? (isFirst ? `%%[ if ${condition} then ]%%\n\n` : `\n\n%%[ elseif ${condition} then ]%%\n\n`) : (isFirst ? `{% if customer.${condition} %}\n\n` : `\n\n{% elif customer.${condition} %}\n\n`);
+                    logicBuffer += `\n${openTag}\n  ${val}\n`; isFirst = false;
+                }
+            });
+            if (logicBuffer) {
+                if (elseContent) logicBuffer += (syntax === 'ampscript') ? `\n\n%%[ else ]%%\n\n  ${elseContent}\n\n` : `\n\n{% else %}\n\n  ${elseContent}\n`;
+                logicBuffer += (syntax === 'ampscript') ? `\n\n%%[ endif ]%%\n\n` : `\n\n{% endif %}\n\n`;
+                return (baseContent ? baseContent + "<br><br>" : "") + logicBuffer;
+            }
+            return baseContent;
+        }
+        function generateSmartImageLogic(syntax, prefix) {
+            const allKeys = Object.keys(csvData).filter(k => k.startsWith(prefix));
+            const distinctTypes = new Set(); let elseType = null;
+            allKeys.forEach(k => { const match = k.match(new RegExp(`^${prefix}_([a-zA-Z0-9]+)_(Desktop|Mobile|Alt)$`)); if (match) { if (match[1] === 'Else' || match[1] === 'Default') elseType = match[1]; else distinctTypes.add(match[1]); } });
+            let validConditions = []; distinctTypes.forEach(type => { if (csvData[`${prefix}_${type}_Desktop`]) validConditions.push(type); });
+            const genericDesktop = csvData[`${prefix}_Else_Desktop`] || csvData[`${prefix}_Desktop`];
+            const genericMobile = csvData[`${prefix}_Else_Mobile`] || csvData[`${prefix}_Mobile`];
+            const genericAlt = csvData[`${prefix}_Else_Alt`] || csvData[`${prefix}_Alt`];
+            if (validConditions.length === 0) { if (genericDesktop) return buildImgTag(genericDesktop, genericMobile, genericAlt); return "<!-- No images provided -->"; }
+            let code = ""; let isFirst = true;
+            validConditions.forEach(type => {
+                const desktop = csvData[`${prefix}_${type}_Desktop`]; const mobile = csvData[`${prefix}_${type}_Mobile`]; const alt = csvData[`${prefix}_${type}_Alt`];
+                let condition = null; for (let suf in logicMap) { if (type.includes(suf)) { condition = logicMap[suf][syntax === 'ampscript' ? 'amp' : 'jinja']; break; } }
+                if (condition) {
+                    const tag = buildImgTag(desktop, mobile, alt);
+                    const openTag = (syntax === 'ampscript') ? (isFirst ? `\n%%[ if customer.${condition} then ]%%\n\n` : `\n\n%%[ elseif ${condition} then ]%%\n\n`) : (isFirst ? `\n\n{% if customer.${condition} %}\n\n` : `\n\n{% elif customer.${condition} %}\n\n`);
+                    code += `\n${openTag}\n${tag}\n`; isFirst = false;
+                }
+            });
+            if (genericDesktop) { const tag = buildImgTag(genericDesktop, genericMobile, genericAlt); code += (syntax === 'ampscript') ? `\n\n%%[ else ]%%\n\n${tag}\n` : `\n\n{% else %}\n\n${tag}\n`; }
+            if (code) code += (syntax === 'ampscript') ? `\n%%[ endif ]%%\n` : `\n{% endif %}\n`;
+            return code;
+        }
+        function generateSmartCTALogic(syntax, prefix) {
+            if (csvData[`${prefix}_AccountManager_URL`] || csvData[`${prefix}_OptimizeDeal_URL`] || csvData[`${prefix}_BuildCampaign_URL`]) return generateGrouponComplexCTA(syntax, prefix);
+            const keys = Object.keys(csvData).filter(k => k.startsWith(prefix) && k.endsWith('_URL'));
+            if (keys.length === 1 && keys[0] === prefix + '_URL') { const url = csvData[prefix + '_URL']; if (!url) return ""; return makeBtnHTML(csvData[prefix + '_Text'], url, csvData[prefix + '_Alias']); }
+            let logicBuffer = ""; let elseData = null; let isFirst = true;
+            keys.forEach(k => {
+                const type = k.substring(prefix.length + 1, k.lastIndexOf('_URL'));
+                const txt = csvData[`${prefix}_${type}_Text`]; const url = csvData[`${prefix}_${type}_URL`]; const alias = csvData[`${prefix}_${type}_Alias`];
+                if (!url) return;
+                if (type === 'Else' || type === 'Default') { elseData = { txt, url, alias }; }
+                else {
+                    let condition = null; for (let suf in logicMap) { if (type.includes(suf)) { condition = logicMap[suf][syntax === 'ampscript' ? 'amp' : 'jinja']; break; } }
+                    if (condition) {
+                        const btn = makeBtnHTML(txt, url, alias);
+                        const openTag = (syntax === 'ampscript') ? (isFirst ? `\n%%[ if ${condition} then ]%%\n` : `\n%%[ elseif ${condition} then ]%%\n`) : (isFirst ? `\n{% if customer.${condition} %}\n` : `\n{% elif customer.${condition} %}\n`);
+                        logicBuffer += `\n${openTag}\n\n${btn}\n`; isFirst = false;
+                    }
+                }
+            });
+            if (logicBuffer) { if (elseData && elseData.url) { const btn = makeBtnHTML(elseData.txt, elseData.url, elseData.alias); logicBuffer += (syntax === 'ampscript') ? `\n%%[ else ]%%\n\n${btn}\n` : `\n{% else %}\n\n${btn}\n`; } logicBuffer += (syntax === 'ampscript') ? `\n%%[ endif ]%%` : `\n{% endif %}`; return logicBuffer; }
+            return "";
+        }
+        function generateGrouponComplexCTA(syntax, prefix) {
+            const btnManager = makeBtnHTML(csvData[`${prefix}_AccountManager_Text`], csvData[`${prefix}_AccountManager_URL`], csvData[`${prefix}_AccountManager_Alias`]);
+            const btnOptimize = makeBtnHTML(csvData[`${prefix}_OptimizeDeal_Text`], csvData[`${prefix}_OptimizeDeal_URL`], csvData[`${prefix}_OptimizeDeal_Alias`]);
+            const btnBuild = makeBtnHTML(csvData[`${prefix}_BuildCampaign_Text`], csvData[`${prefix}_BuildCampaign_URL`], csvData[`${prefix}_BuildCampaign_Alias`]);
+            if (btnManager === "" && btnOptimize === "" && btnBuild === "") return "";
+            if (syntax === 'ampscript') return `%%[ if not empty(ACCOUNT_OWNER_NAME) and ACCOUNT_OWNER_NAME != "House Account" and IndexOf(ACCOUNT_OWNER_NAME,"Merchant") == 0 then ]%%\n\n${btnManager}\n\n%%[ else ]%%\n  %%[ if HAS_LIVE_DEAL == "True" then ]%%\n\n${btnOptimize}\n\n  %%[ else ]%%\n\n${btnBuild}\n\n  %%[ endif ]%%\n%%[ endif ]%%`;
+            else return `{% if customer.ACCOUNT_OWNER_NAME and customer.ACCOUNT_OWNER_NAME != "House Account" and "Merchant" not in customer.ACCOUNT_OWNER_NAME %}\n\n${btnManager}\n\n{% else %}\n  {% if customer.HAS_LIVE_DEAL == "True" %}\n\n${btnOptimize}\n\n  {% else %}\n\n${btnBuild}\n\n  {% endif %}\n{% endif %}`;
+        }
+        function buildImgTag(d, m, alt) { if (!d) return ""; const mSrc = m || d; return `<!-- DESKTOP -->\n<img src="${d}" alt="${alt || ''}" border="0" class="em_img em_hide" style="display:block; border-radius:10px;" width="600">\n\n<!--[if !mso]><!-->\n<!-- MOBILE -->\n<div class="imghide" style="max-height:0px; font-size:0; display:none; overflow:hidden;">\n\n<img src="${mSrc}" alt="${alt || ''}" border="0" class="imghide em_img em_center" height="0" width="0" style="border-radius:10px;">\n\n</div><!--<![endif]-->`; }
+
+        function makeBtnHTML(text, url, alias) {
+            if (!url) return ""; return `<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="line-height:18px; padding-left:30px; padding-right:30px; padding-top:15px; padding-bottom:20px;"><div style="display:inline-block; width:100%; word-wrap:break-word; overflow-wrap:break-word;"><table align="center" border="0" cellpadding="0" cellspacing="0"><tr><td align="center">
+        <table border="0" cellpadding="20" cellspacing="0"><tr><td align="center" bgcolor="#008A22" style="font-size:18px; line-height:26px; font-weight:bold; font-family:'Open Sans',Arial,sans-serif; color:#ffffff; padding:12px 35px; border-radius:25px; border-style:none;">\n\n<a href="${url}" style="color:#ffffff; text-decoration:none;" alias="${alias || 'CTA'}">${text || 'Click Here'}</a>\n\n</td></tr></table></td></tr></table></div></td></tr></table>`;
+        }
+
+        function wrapInImageTable(content, pt, pb) { return `<table align="center" border="0" cellpadding="0" cellspacing="0" class="em_wrapper" style="width:600px;" width="600">\n<tr><td align="center" valign="top" style="padding-top:${pt}; padding-bottom:${pb};">\n\n${content}\n\n</td></tr></table>`; }
+
+        function wrapInTable(content) { if (!content || content.trim() === "") return ""; return `<table width="100%" cellpadding="0" cellspacing="0" border="0">\n<tr><td align="center" valign="top" style="padding-left:15px; padding-right:15px; padding-top:9px; padding-bottom:15px; font-size:16px; line-height:24px;">\n<div style="text-align:left; font-size:16px; line-height:24px; font-family:'Open Sans',Helvetica,Arial,sans-serif; color:#230F33; font-weight:normal;">\n\n${content}\n\n</div>\n</td></tr>\n</table>`; }
+
+        function generateBulletsLogic() {
+            const title = csvData['Bullets_Paragraph']; if (!title && !csvData['Bullets_1']) return "";
+            let listItems = ""; for (let i = 1; i <= 10; i++) { const bText = csvData[`Bullets_${i}`]; if (bText) listItems += `                    <li style="padding-top:4px;">\n                        ${bText} </li>\n`; }
+            return `<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" valign="top" style="padding-left:15px; padding-right:15px; padding-top:9px; padding-bottom:0px; font-size:16px; line-height:24px;"><div style="text-align:left; font-size:16px; line-height:24px; font-family:'Open Sans',Arial,sans-serif; color:#230F33; font-weight:normal;"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="left" valign="top" style="font-size:20px; line-height:28px;"><div style="text-align:left; font-size:20px; line-height:28px; font-family:'DM Serif Display',Arial,sans-serif; color:#230F33; font-weight:bold;">\n\n${title || ""}\n\n</div></td></tr></table><ul style="margin:0px; padding-bottom:9px; padding-top:10px">\n\n${listItems}\n\n</ul></div></td></tr></table>`;
+        }
+
+
+        const emailTemplateTop = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html style="padding:0;margin:0;opacity:1;" xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:v="urn:schemas-microsoft-com:vml">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Groupon Merchant</title>
+    <style type="text/css">
+        html { -webkit-text-size-adjust: none; }
+        body { margin: 0 !important; padding: 0 !important; -webkit-text-size-adjust: 100% !important; -ms-text-size-adjust: 100% !important; -webkit-font-smoothing: antialiased !important; }
+        img { border: 0 !important; outline: none !important; }
+        p { margin: 0px !important; padding: 0px !important; }
+        table { border-collapse: collapse; mso-table-lspace: 0px; mso-table-rspace: 0px; }
+        td, a, span { border-collapse: collapse; mso-line-height-rule: exactly; }
+        .imghide { max-height: 0px; font-size: 0; display: none; overflow: hidden; }
+        @media only screen and (max-width: 480px) {
+            .em_main_table { width: 100% !important; }
+            .em_wrapper { width: 100% !important; }
+            .em_hide { display: none !important; }
+            .mobile_hide { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; }
+            .imghide { max-height: none !important; font-size: 12px !important; display: block !important; overflow: visible !important; }
+            .em_img { width: 100% !important; height: auto !important; }
+        }
+    </style>
+</head>
+<body class="em_body" style="margin:0;padding:0;word-spacing:normal;background-color:#ffffff;">
+    <div role="article" aria-roledescription="email" style="-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;background-color:#ffffff;">
+        <table bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0" class="em_full_wrap" width="100%">
+            <tr>
+                <td align="center" valign="top">
+                    <table align="center" border="0" cellpadding="0" cellspacing="0" class="em_main_table" style="width:600px; table-layout:fixed;" width="600">
+                        <tr>
+                            <td align="center" valign="top">
+                                <table align="center" border="0" cellpadding="0" cellspacing="0" class="em_wrapper" style="width:600px;" width="600">
+                                    <tr>
+                                        <td align="center" valign="top">
+                                            <!-- ID CONTENT TABLE -->
+                                            <table align="center" border="0" cellpadding="0" cellspacing="0" class="em_wrapper" style="width:600px;" width="600" id="CONTENT">
+                                                <!-- HEADER ROW -->
+                                                <tr>
+                                                    <td align="center" style="padding-left:15px; padding-right:15px; padding-top:10px; padding-bottom:15px;" class="toppad15">
+                                                        <table width="100%" align="center" border="0" cellpadding="0" cellspacing="0">
+                                                            <tr>
+                                                                <td align="left" class="wrap width100 center">
+                                                                    <img src="https://image.mc.groupon.com/lib/fe3e157075640475711070/m/1/GrouponMerchantLogo_2025.png" style="display:block;" class="em_img centercenter" alt="Groupon Merchant" width="285">
+                                                                </td>
+                                                                <td align="right" class="mobile_hide" style="font-size:18px; line-height:22px;">
+                                                                    <div style="font-family:'Open Sans',Arial,sans-serif; font-size:18px; line-height:22px; color:#230F33;">
+                                                                        <a href="%%=RedirectTo(v(@urlMerchantCenter))=%%" style="color:#230F33; text-decoration:none;">Merchant Center</a>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                <!-- END HEADER ROW -->
+
+                                                <!-- DYNAMIC BLOCKS START HERE -->`;
+
+        const emailTemplateBottom = `
+                                                <!-- DYNAMIC BLOCKS END HERE -->
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <custom name="opencounter" type="tracking" />
+</body>
+</html>`;
+
+        const resizerVert = document.getElementById('dragHandleVertical');
+        const topPane = document.getElementById('topPane');
+        const bottomPane = document.getElementById('bottomPane');
+        const fullBody = document.getElementById('fullBodyGroup');
+        let isResizingVert = false;
+
+        function generateFullHTML() {
+            const blocks = document.querySelectorAll('.block-container');
+            let contentHtml = "";
+            let subjectTxt = "";
+            let preheaderTxt = "";
+
+            blocks.forEach(block => {
+                const title = block.querySelector('.block-title span').innerText;
+                const body = block.querySelector('.block-body');
+                const textArea = block.querySelector('textarea');
+                let code = textArea.value.trim();
+
+                if (title.includes("Subject Line")) {
+                    subjectTxt = code;
+                } else if (title.includes("Preheader")) {
+                    preheaderTxt = code;
+                }
+                else if (!body.classList.contains('collapsed') && code) {
+                    contentHtml += `
+                    <!-- BLOQUE: ${title} -->
+                    <tr><td align="center" valign="top">${code}</td></tr>`;
+                }
+            });
+
+            const emailTop = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>Groupon</title><style type="text/css">.imghide {display:none; overflow:hidden; width:0; max-height:0; line-height:0; mso-hide:all;} .em_img{display:block; width:100%; max-width:600px;} .mobile_hide { display: block; } @media only screen and (max-width: 480px) { .mobile_hide { display: none !important; } }</style></head><body style="margin:0; padding:0; background-color:#ffffff;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff"><tr><td align="center" valign="top">
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="width:600px; max-width:600px;" id="CONTENT">
+<!-- HEADER ROW (LOGO) -->
+<tr>
+    <td align="center" style="padding:10px 15px 15px 15px;">
+        <table width="100%" align="center" border="0" cellpadding="0" cellspacing="0">
+            <tr>
+                <td align="left"><img src="https://image.mc.groupon.com/lib/fe3e157075640475711070/m/1/GrouponMerchantLogo_2025.png" style="display:block; border:0;" width="285" alt="Groupon Merchant"></td>
+                <td align="right" class="mobile_hide" style="font-family:'Open Sans',Arial,sans-serif; font-size:18px; color:#230F33;">
+                    <a href="%%=RedirectTo(v(@urlMerchantCenter))=%%" style="color:#230F33; text-decoration:none;">Merchant Center</a>
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>`;
+
+            const emailBottom = `</table></td></tr></table></body></html>`;
+
+            const finalHtmlBody = emailTop + contentHtml + emailBottom;
+
+            const textForClipboard = `Subject: ${subjectTxt}\nPreheader: ${preheaderTxt}\n\n${finalHtmlBody}`;
+
+            const textarea = document.getElementById('fullHtmlTextarea');
+            textarea.value = textForClipboard;
+
+            const iframe = document.getElementById('htmlPreviewFrame');
+            const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+            const visualHeader = `
+                <div style="background:#f0f0f0; padding:15px; border-bottom:1px solid #ccc; font-family:sans-serif; font-size:14px; color:#333; margin-bottom:20px;">
+                    <div style="margin-bottom:5px;"><strong>Subject:</strong> ${subjectTxt}</div>
+                    <div><strong>Preheader:</strong> ${preheaderTxt}</div>
+                </div>`;
+
+            doc.open();
+            doc.write(visualHeader + finalHtmlBody);
+            doc.close();
+
+            // Mostrar Panel
+            document.getElementById('fullHtmlContainer').style.display = 'flex';
+        }
+
+        function updateFullPreview() {
+            const val = document.getElementById('fullHtmlTextarea').value;
+            const iframe = document.getElementById('htmlPreviewFrame');
+            const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+            let htmlContent = "";
+            let headerContent = "";
+
+            const docTypeIndex = val.indexOf('<!DOCTYPE');
+
+            if (docTypeIndex > -1) {
+                htmlContent = val.substring(docTypeIndex);
+
+                const textPart = val.substring(0, docTypeIndex).trim();
+
+                if (textPart) {
+                    const formattedText = textPart
+                        .replace(/\n/g, '<br>')
+                        .replace(/(Subject:|Preheader:)/g, '<strong>$1</strong>');
+
+                    headerContent = `
+                    <div style="background:#f0f0f0; padding:15px; border-bottom:1px solid #ccc; font-family:sans-serif; font-size:14px; color:#333; margin-bottom:20px;">
+                        ${formattedText}
+                    </div>`;
+                }
+            } else {
+                htmlContent = val;
+            }
+
+            doc.open();
+            doc.write(headerContent + htmlContent);
+            doc.close();
+        }
+
+        function updateFullPreview() {
+            const val = document.getElementById('fullHtmlTextarea').value;
+            let htmlPart = val;
+            const docTypeIndex = val.indexOf('<!DOCTYPE');
+            const htmlTagIndex = val.indexOf('<html');
+
+            if (docTypeIndex > -1) {
+                htmlPart = val.substring(docTypeIndex);
+            } else if (htmlTagIndex > -1) {
+                htmlPart = val.substring(htmlTagIndex);
+            }
+
+            const iframe = document.getElementById('htmlPreviewFrame');
+            const doc = iframe.contentDocument || iframe.contentWindow.document;
+            doc.open();
+            doc.write(htmlPart);
+            doc.close();
+        }
+
+        resizerVert.addEventListener('mousedown', (e) => {
+            isResizingVert = true;
+            document.body.style.cursor = 'row-resize';
+            resizerVert.classList.add('resizing');
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isResizingVert) return;
+
+            const containerRect = fullBody.getBoundingClientRect();
+            let newTopHeight = e.clientY - containerRect.top;
+
+            if (newTopHeight < 100) newTopHeight = 100;
+            if (newTopHeight > containerRect.height - 100) newTopHeight = containerRect.height - 100;
+
+            const percentage = (newTopHeight / containerRect.height) * 100;
+
+            topPane.style.flex = `0 0 ${percentage}%`;
+            bottomPane.style.flex = `1 1 0`;
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isResizingVert) {
+                isResizingVert = false;
+                document.body.style.cursor = 'default';
+                resizerVert.classList.remove('resizing');
+            }
+        });
+
+        function copyFullCode() {
+            const textarea = document.getElementById('fullHtmlTextarea');
+            textarea.select();
+            navigator.clipboard.writeText(textarea.value).then(() => alert("HTML Completo Copiado!"));
+        }
+
+        function closeFullView() {
+            document.getElementById('fullHtmlContainer').style.display = 'none';
+        }
+
+
+    </script>
+</body>
+
+</html>
