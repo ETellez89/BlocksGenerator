@@ -1048,14 +1048,34 @@
             if (logicBuffer) { if (elseData && elseData.url) { const btn = makeBtnHTML(elseData.txt, elseData.url, elseData.alias); logicBuffer += (syntax === 'ampscript') ? `\n%%[ else ]%%\n\n${btn}\n` : `\n{% else %}\n\n${btn}\n`; } logicBuffer += (syntax === 'ampscript') ? `\n%%[ endif ]%%` : `\n{% endif %}`; return logicBuffer; }
             return "";
         }
-        function generateGrouponComplexCTA(syntax, prefix) {
-            const btnManager = makeBtnHTML(csvData[`${prefix}_AccountManager_Text`], csvData[`${prefix}_AccountManager_URL`], csvData[`${prefix}_AccountManager_Alias`]);
-            const btnOptimize = makeBtnHTML(csvData[`${prefix}_OptimizeDeal_Text`], csvData[`${prefix}_OptimizeDeal_URL`], csvData[`${prefix}_OptimizeDeal_Alias`]);
-            const btnBuild = makeBtnHTML(csvData[`${prefix}_BuildCampaign_Text`], csvData[`${prefix}_BuildCampaign_URL`], csvData[`${prefix}_BuildCampaign_Alias`]);
-            if (btnManager === "" && btnOptimize === "" && btnBuild === "") return "";
-            if (syntax === 'ampscript') return `%%[ if not empty(ACCOUNT_OWNER_NAME) and ACCOUNT_OWNER_NAME != "House Account" and IndexOf(ACCOUNT_OWNER_NAME,"Merchant") == 0 then ]%%\n\n${btnManager}\n\n%%[ else ]%%\n  %%[ if HAS_LIVE_DEAL == "True" then ]%%\n\n${btnOptimize}\n\n  %%[ else ]%%\n\n${btnBuild}\n\n  %%[ endif ]%%\n%%[ endif ]%%`;
-            else return `{% if customer.ACCOUNT_OWNER_NAME and customer.ACCOUNT_OWNER_NAME != "House Account" and "Merchant" not in customer.ACCOUNT_OWNER_NAME %}\n\n${btnManager}\n\n{% else %}\n  {% if customer.HAS_LIVE_DEAL == "True" %}\n\n${btnOptimize}\n\n  {% else %}\n\n${btnBuild}\n\n  {% endif %}\n{% endif %}`;
-        }
+function generateGrouponComplexCTA(syntax, prefix) {
+    const btnManager  = makeBtnHTML(csvData[`${prefix}_AccountManager_Text`],  csvData[`${prefix}_AccountManager_URL`],  csvData[`${prefix}_AccountManager_Alias`]);
+    const btnOptimize = makeBtnHTML(csvData[`${prefix}_OptimizeDeal_Text`],     csvData[`${prefix}_OptimizeDeal_URL`],     csvData[`${prefix}_OptimizeDeal_Alias`]);
+    const btnBuild    = makeBtnHTML(csvData[`${prefix}_BuildCampaign_Text`],    csvData[`${prefix}_BuildCampaign_URL`],    csvData[`${prefix}_BuildCampaign_Alias`]);
+
+    // GetStarted solo se usa si tiene URL rellena en el CSV
+    const hasGetStarted = !!csvData[`${prefix}_GetStarted_URL`];
+    const btnGetStarted = hasGetStarted
+        ? makeBtnHTML(csvData[`${prefix}_GetStarted_Text`], csvData[`${prefix}_GetStarted_URL`], csvData[`${prefix}_GetStarted_Alias`])
+        : "";
+
+    if (btnManager === "" && btnOptimize === "" && btnBuild === "") return "";
+
+    if (syntax === 'ampscript') {
+        // Bloque No Live: GetStarted si no tiene permalink, BuildCampaign si lo tiene
+        const noLiveBlock = hasGetStarted
+            ? `%%[ if MERCHANT_PERMALINK == '' then ]%%\n\n${btnGetStarted}\n\n%%[ else ]%%\n\n${btnBuild}\n\n%%[ endif ]%%`
+            : btnBuild;
+
+        return `%%[ if not empty(ACCOUNT_OWNER_NAME) and ACCOUNT_OWNER_NAME != "House Account" and IndexOf(ACCOUNT_OWNER_NAME,"Merchant") == 0 then ]%%\n\n${btnManager}\n\n%%[ else ]%%\n<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="padding-left:30px; padding-right:30px; padding-top:15px; padding-bottom:20px;"><div style="display:inline-block; width:100%;"><table align="center" border="0" cellpadding="0" cellspacing="0"><tr><td align="center">\n%%[ if HAS_LIVE_DEAL == "True" then ]%%\n\n${btnOptimize}\n\n%%[ else ]%%\n${noLiveBlock}\n%%[\nendif\n]%%\n</td></tr></table></div></td></tr></table>\n%%[ endif ]%%`;
+    } else {
+        const noLiveBlock = hasGetStarted
+            ? `{% if customer.MERCHANT_PERMALINK == '' %}\n\n${btnGetStarted}\n\n{% else %}\n\n${btnBuild}\n\n{% endif %}`
+            : btnBuild;
+
+        return `{% if customer.ACCOUNT_OWNER_NAME and customer.ACCOUNT_OWNER_NAME != "House Account" and "Merchant" not in customer.ACCOUNT_OWNER_NAME %}\n\n${btnManager}\n\n{% else %}\n  {% if customer.HAS_LIVE_DEAL == "True" %}\n\n${btnOptimize}\n\n  {% else %}\n${noLiveBlock}\n  {% endif %}\n{% endif %}`;
+    }
+}
         function buildImgTag(d, m, alt) { if (!d) return ""; const mSrc = m || d; return `<!-- DESKTOP -->\n<img src="${d}" alt="${alt || ''}" border="0" class="em_img em_hide" style="display:block; border-radius:10px;" width="600">\n\n<!--[if !mso]><!-->\n<!-- MOBILE -->\n<div class="imghide" style="max-height:0px; font-size:0; display:none; overflow:hidden;">\n\n<img src="${mSrc}" alt="${alt || ''}" border="0" class="imghide em_img em_center" height="0" width="0" style="border-radius:10px;">\n\n</div><!--<![endif]-->`; }
 
         function makeBtnHTML(text, url, alias) {
