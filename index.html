@@ -181,7 +181,6 @@
             transition: background 0.3s;
         }
 
-        /* --- ESTILOS DE TEMA PARA CÓDIGO --- */
         textarea {
             width: 100%;
             height: 100%;
@@ -200,7 +199,6 @@
             transition: font-size 0.2s, color 0.3s;
         }
 
-        /* Clase para Light Mode en el área de código */
         .light-code-theme {
             background: #ffffff !important;
             border-left: 1px solid #ddd;
@@ -210,7 +208,6 @@
             color: #24292e !important;
         }
 
-        /* --- POPUP --- */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -300,7 +297,6 @@
             font-size: 14px;
         }
 
-        /* --- RESIZER --- */
         .resizer {
             width: 13px;
             background: #ddd;
@@ -326,7 +322,6 @@
             letter-spacing: 2px;
         }
 
-        /* Estilos Email */
         .imghide {
             max-height: 0px;
             font-size: 0;
@@ -423,7 +418,6 @@
             padding: 20px;
         }
 
-
         .full-body {
             display: flex;
             flex-direction: column;
@@ -432,18 +426,52 @@
         }
 
         .full-code-pane {
-            flex: 1;
+            height: 50%;
             background: #282c34;
             position: relative;
-            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .full-code-pane textarea {
+            flex: 1;
+            border: none;
+            padding: 15px;
+            font-size: 13px;
+            resize: none;
+        }
+
+        .resizer-vertical {
+            height: 12px;
+            background: #f1f1f1;
+            border-top: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
+            cursor: row-resize;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        .resizer-vertical:hover,
+        .resizer-vertical.resizing {
+            background: #e0e0e0;
+        }
+
+        .resizer-vertical::after {
+            content: "•••";
+            color: #999;
+            letter-spacing: 2px;
+            margin-top: -3px;
+            font-size: 10px;
         }
 
         .full-visual-pane {
             flex: 1;
             background: #ffffff;
             position: relative;
-            border-top: 1px solid #ddd;
-            min-height: 100px;
+            overflow: hidden;
         }
 
         #htmlPreviewFrame {
@@ -451,32 +479,6 @@
             height: 100%;
             border: none;
             display: block;
-        }
-
-        .resizer-vertical {
-            height: 12px;
-            background: #e9ecef;
-            cursor: row-resize;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-top: 1px solid #ccc;
-            border-bottom: 1px solid #ccc;
-            z-index: 10;
-            flex-shrink: 0;
-        }
-
-        .resizer-vertical:hover,
-        .resizer-vertical.resizing {
-            background: #d0d0d0;
-        }
-
-        .resizer-vertical::after {
-            content: "•••";
-            color: #666;
-            font-size: 14px;
-            letter-spacing: 3px;
-            margin-top: -4px;
         }
 
         .main-workspace {
@@ -518,82 +520,6 @@
             align-items: center;
             flex-shrink: 0;
         }
-
-        .btn-full {
-            background: #6f42c1;
-            color: white;
-            margin-left: 10px;
-        }
-
-        .btn-full:hover {
-            background: #5a32a3;
-        }
-
-        .full-body {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            overflow: hidden;
-        }
-
-
-        .full-code-pane {
-            height: 50%;
-            /* Inicial */
-            background: #282c34;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .full-code-pane textarea {
-            flex: 1;
-            border: none;
-            padding: 15px;
-            font-size: 13px;
-            resize: none;
-        }
-
-
-        .resizer-vertical {
-            height: 12px;
-            background: #f1f1f1;
-            border-top: 1px solid #ccc;
-            border-bottom: 1px solid #ccc;
-            cursor: row-resize;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            z-index: 10;
-        }
-
-        .resizer-vertical:hover,
-        .resizer-vertical.resizing {
-            background: #e0e0e0;
-        }
-
-        .resizer-vertical::after {
-            content: "•••";
-            color: #999;
-            letter-spacing: 2px;
-            margin-top: -3px;
-            font-size: 10px;
-        }
-
-        .full-visual-pane {
-            flex: 1;
-            background: #ffffff;
-            position: relative;
-            overflow: hidden;
-        }
-
-        #htmlPreviewFrame {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: block;
-        }
     </style>
 </head>
 
@@ -616,7 +542,6 @@
                 <option value="jinja">Jinja</option>
             </select>
         </div>
-        <!-- CONTROLES GENERALES -->
         <div id="generalControls"
             style="display:flex; gap:10px; align-items:center; border-left:1px solid #ddd; padding-left:15px;">
             <label><strong>General:</strong></label>
@@ -634,41 +559,14 @@
             <button class="btn btn-full" onclick="generateFullHTML()">Generate Full HTML 🚀</button>
         </div>
     </div>
+
     <div class="main-workspace">
-
-        <div class="main-workspace">
-
-            <div id="outputArea"></div>
-
-            <div id="fullHtmlContainer">
-                <div class="full-header">
-                    <span>Full HTML & Preview</span>
-                    <div style="display:flex; gap:10px;">
-                        <button class="btn btn-copy-small" onclick="copyFullCode()"
-                            style="background:white; color:#6f42c1;">Copy All</button>
-                        <button class="btn-close" onclick="closeFullView()"
-                            style="background:transparent; border:1px solid white;">✕</button>
-                    </div>
-                </div>
-
-                <div class="full-body" id="fullBodyGroup">
-                    <div class="full-code-pane" id="topPane">
-                        <textarea id="fullHtmlTextarea" oninput="updateFullPreview()"></textarea>
-                    </div>
-
-                    <div class="resizer-vertical" id="dragHandleVertical"></div>
-
-                    <div class="full-visual-pane" id="bottomPane">
-                        <iframe id="htmlPreviewFrame"></iframe>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div id="outputArea"></div>
 
         <div id="fullHtmlContainer">
             <div class="full-header">
-                <span>Full HTML & Preview</span>
-                <div>
+                <span>Full HTML &amp; Preview</span>
+                <div style="display:flex; gap:10px;">
                     <button class="btn btn-copy-small" onclick="copyFullCode()"
                         style="background:white; color:#6f42c1;">Copy All</button>
                     <button class="btn-close" onclick="closeFullView()"
@@ -688,13 +586,12 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <div id="popupModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title" id="modalTitle">Name of the Block </div>
+                <div class="modal-title" id="modalTitle">Name of the Block</div>
                 <div class="modal-actions">
                     <select class="zoom-select" onchange="changeZoom(this, 'modalTextarea')">
                         <option value="12">x1</option>
@@ -726,16 +623,22 @@
         let currentEditingId = null;
         let isGlobalLight = false;
 
+        // =====================================================================
+        // logicMap — FIX: added 'Not_Live' entry for P2_Not_Live support
+        // =====================================================================
         const logicMap = {
-            'New': { amp: 'MERCHANT_TYPE == "New"', jinja: 'MERCHANT_TYPE == "New"' },
-            'Inactive': { amp: 'MERCHANT_TYPE == "Inactive"', jinja: 'MERCHANT_TYPE == "Inactive"' },
-            'Active': { amp: 'MERCHANT_TYPE == "Active"', jinja: 'MERCHANT_TYPE == "Active"' },
-            'Beauty': { amp: 'CATEGORY_V3 == "Beauty / Wellness / Healthcare"', jinja: 'CATEGORY_V3 == "Beauty / Wellness / Healthcare"' },
-            'Food': { amp: 'CATEGORY_V3 == "Food & Drink"', jinja: 'CATEGORY_V3 == "Food & Drink"' },
-            'Leisure': { amp: 'CATEGORY_V3 == "Leisure Offers / Activities"', jinja: 'CATEGORY_V3 == "Leisure Offers / Activities"' },
-            'Services': { amp: 'CATEGORY_V3 == "Services"', jinja: 'CATEGORY_V3 == "Services"' },
-            'RepOwned': { amp: 'not empty(ACCOUNT_OWNER_NAME) and ACCOUNT_OWNER_NAME != "House Account" and IndexOf(ACCOUNT_OWNER_NAME,"Merchant") == 0', jinja: 'ACCOUNT_OWNER_NAME and ACCOUNT_OWNER_NAME != "House Account" and "Merchant" not in ACCOUNT_OWNER_NAME' },
-            'NoRepOwned': { amp: 'empty(ACCOUNT_OWNER_NAME) or ACCOUNT_OWNER_NAME == "House Account" or IndexOf(ACCOUNT_OWNER_NAME,"Merchant") > 0', jinja: 'not ACCOUNT_OWNER_NAME or ACCOUNT_OWNER_NAME == "House Account" or "Merchant" in ACCOUNT_OWNER_NAME' }
+            'New':       { amp: 'MERCHANT_TYPE == "New"',      jinja: 'MERCHANT_TYPE == "New"' },
+            'Inactive':  { amp: 'MERCHANT_TYPE == "Inactive"', jinja: 'MERCHANT_TYPE == "Inactive"' },
+            'Active':    { amp: 'MERCHANT_TYPE == "Active"',   jinja: 'MERCHANT_TYPE == "Active"' },
+            'Beauty':    { amp: 'CATEGORY_V3 == "Beauty / Wellness / Healthcare"', jinja: 'CATEGORY_V3 == "Beauty / Wellness / Healthcare"' },
+            'Food':      { amp: 'CATEGORY_V3 == "Food & Drink"',                  jinja: 'CATEGORY_V3 == "Food & Drink"' },
+            'Leisure':   { amp: 'CATEGORY_V3 == "Leisure Offers / Activities"',   jinja: 'CATEGORY_V3 == "Leisure Offers / Activities"' },
+            'TDD':       { amp: 'CATEGORY_V3 == "Leisure Offers / Activities"',   jinja: 'CATEGORY_V3 == "Leisure Offers / Activities"' },
+            'Services':  { amp: 'CATEGORY_V3 == "Services"',  jinja: 'CATEGORY_V3 == "Services"' },
+            'RepOwned':  { amp: 'not empty(ACCOUNT_OWNER_NAME) and ACCOUNT_OWNER_NAME != "House Account" and IndexOf(ACCOUNT_OWNER_NAME,"Merchant") == 0', jinja: 'ACCOUNT_OWNER_NAME and ACCOUNT_OWNER_NAME != "House Account" and "Merchant" not in ACCOUNT_OWNER_NAME' },
+            'NoRepOwned':{ amp: 'empty(ACCOUNT_OWNER_NAME) or ACCOUNT_OWNER_NAME == "House Account" or IndexOf(ACCOUNT_OWNER_NAME,"Merchant") > 0', jinja: 'not ACCOUNT_OWNER_NAME or ACCOUNT_OWNER_NAME == "House Account" or "Merchant" in ACCOUNT_OWNER_NAME' },
+            // ✅ FIX 1: Added Not_Live so that P2_Not_Live key is recognized
+            'Not_Live':  { amp: 'HAS_LIVE_DEAL != "True"', jinja: 'HAS_LIVE_DEAL != "True"' }
         };
 
         function cleanAll() {
@@ -744,17 +647,13 @@
             document.getElementById('countryWrapper').style.display = "none";
             document.getElementById('countrySelector').innerHTML = "";
             document.getElementById('genBtn').disabled = true;
-
             rawRows = [];
             csvData = {};
-
             document.getElementById('fullHtmlContainer').style.display = 'none';
             document.getElementById('fullHtmlTextarea').value = "";
             const iframe = document.getElementById('htmlPreviewFrame');
             const doc = iframe.contentDocument || iframe.contentWindow.document;
-            doc.open();
-            doc.write("");
-            doc.close();
+            doc.open(); doc.write(""); doc.close();
         }
 
         function parseHeaders() {
@@ -766,19 +665,16 @@
                 if (!text.trim()) { alert("Archivo vacío."); return; }
                 const firstLine = text.split('\n')[0];
                 const commas = (firstLine.match(/,/g) || []).length;
-                const semis = (firstLine.match(/;/g) || []).length;
-                const tabs = (firstLine.match(/\t/g) || []).length;
+                const semis  = (firstLine.match(/;/g) || []).length;
+                const tabs   = (firstLine.match(/\t/g) || []).length;
                 let separator = ',';
                 if (semis > commas && semis > tabs) separator = ';';
                 if (tabs > commas && tabs > semis) separator = '\t';
 
                 rawRows = [];
-                let currentRow = [];
-                let currentVal = '';
-                let insideQuote = false;
+                let currentRow = [], currentVal = '', insideQuote = false;
                 for (let i = 0; i < text.length; i++) {
-                    const char = text[i];
-                    const nextChar = text[i + 1];
+                    const char = text[i], nextChar = text[i + 1];
                     if (char === '"') {
                         if (insideQuote && nextChar === '"') { currentVal += '"'; i++; }
                         else { insideQuote = !insideQuote; }
@@ -791,6 +687,7 @@
                     } else { currentVal += char; }
                 }
                 if (currentVal || currentRow.length > 0) { currentRow.push(currentVal.trim()); rawRows.push(currentRow); }
+
                 const headers = rawRows[0];
                 if (!headers || headers.length < 2) { alert(`Error: No se detectaron columnas.`); return; }
                 const select = document.getElementById('countrySelector');
@@ -838,7 +735,6 @@
             createBlock("CTA 2", generateSmartCTALogic(syntax, 'CTA2_Link'));
             createBlock("Closing", wrapInTable(csvData['Closing_Text'] || ""));
             createBlock("Signature", wrapInTable(csvData['Signature_Copy'] || ""));
-
         }
 
         function applyGeneralZoom(val) {
@@ -852,11 +748,8 @@
             isGlobalLight = !isGlobalLight;
             const panes = document.querySelectorAll('.code-pane');
             const buttons = document.querySelectorAll('.btn-theme-toggle');
-
             panes.forEach(p => isGlobalLight ? p.classList.add('light-code-theme') : p.classList.remove('light-code-theme'));
-
             buttons.forEach(b => b.innerHTML = isGlobalLight ? "💡" : "🌑");
-
             btn.innerHTML = isGlobalLight ? "💡" : "🌑";
         }
 
@@ -880,7 +773,6 @@
             const btnHideClass = isEmpty ? "btn-icon btn-hide hidden-state" : "btn-icon btn-hide";
             const bodyClass = isEmpty ? "block-body collapsed" : "block-body";
             const eyeIcon = isEmpty ? "🚫" : "⭕";
-
             const themeClass = isGlobalLight ? "code-pane light-code-theme" : "code-pane";
             const lightIcon = isGlobalLight ? "💡" : "🌑";
 
@@ -922,31 +814,34 @@
                 body.classList.add('collapsed'); btn.innerHTML = "🚫";
             }
         }
+
         function changeZoom(selectElem, targetId) {
             document.getElementById(targetId).style.fontSize = selectElem.value + "px";
         }
+
         function syncFromInline(id) {
             const code = document.getElementById(`textarea-${id}`).value;
             document.getElementById(`preview-${id}`).innerHTML = cleanCodeForPreview(code);
         }
+
         function openModal(id, title) {
             currentEditingId = id;
             const code = document.getElementById(`textarea-${id}`).value;
             document.getElementById('modalTitle').innerText = title;
             document.getElementById('modalTextarea').value = code;
             document.getElementById('modalPreview').innerHTML = cleanCodeForPreview(code);
-
             const isLight = document.getElementById(`pane-${id}`).classList.contains('light-code-theme');
             const modalPane = document.getElementById('modalCodePane');
             isLight ? modalPane.classList.add('light-code-theme') : modalPane.classList.remove('light-code-theme');
             document.getElementById('modalThemeBtn').innerHTML = isLight ? "💡" : "🌑";
-
             document.getElementById('popupModal').style.display = 'flex';
         }
+
         function closeModal() {
             document.getElementById('popupModal').style.display = 'none';
             currentEditingId = null;
         }
+
         function syncFromModal() {
             if (!currentEditingId) return;
             const newCode = document.getElementById('modalTextarea').value;
@@ -954,12 +849,15 @@
             document.getElementById(`textarea-${currentEditingId}`).value = newCode;
             document.getElementById(`preview-${currentEditingId}`).innerHTML = cleanCodeForPreview(newCode);
         }
+
         function copyFromModal() {
             navigator.clipboard.writeText(document.getElementById('modalTextarea').value).then(() => alert("Copiado!"));
         }
+
         function cleanCodeForPreview(code) {
             return code.replace(/%%\[.*?\]%%/gs, '').replace(/{% .*? %}/gs, '').replace(/<!--.*?-->/gs, '');
         }
+
         function copyToClipboard(id) {
             navigator.clipboard.writeText(document.getElementById(`textarea-${id}`).value).then(() => alert("Copiado!"));
         }
@@ -979,6 +877,9 @@
         });
         document.addEventListener('mouseup', () => { isResizing = false; document.body.style.cursor = 'default'; });
 
+        // =====================================================================
+        // generateSmartTextLogic — unchanged, works correctly for AMPScript
+        // =====================================================================
         function generateSmartTextLogic(syntax, prefix) {
             const keys = Object.keys(csvData).filter(k => k.startsWith(prefix + '_'));
             const baseContent = (prefix === 'P1') ? (csvData['P1'] || "") : (csvData[prefix] || "");
@@ -988,215 +889,185 @@
                 if (key === 'P1_Intro_Static') return;
                 const val = csvData[key]; if (!val) return;
                 let matchedSuffix = null;
-                for (let suf in logicMap) { if (key.endsWith('_' + suf) || key.includes('_' + suf + '_')) { matchedSuffix = suf; break; } }
+                for (let suf in logicMap) {
+                    if (key.endsWith('_' + suf) || key.includes('_' + suf + '_')) { matchedSuffix = suf; break; }
+                }
                 if (key.endsWith('_Else') || key.endsWith('_Default')) { elseContent = val; }
                 else if (matchedSuffix) {
                     const condition = logicMap[matchedSuffix][syntax === 'ampscript' ? 'amp' : 'jinja'];
-                    const openTag = (syntax === 'ampscript') ? (isFirst ? `%%[ if ${condition} then ]%%\n\n` : `\n\n%%[ elseif ${condition} then ]%%\n\n`) : (isFirst ? `{% if customer.${condition} %}\n\n` : `\n\n{% elif customer.${condition} %}\n\n`);
+                    const openTag = (syntax === 'ampscript')
+                        ? (isFirst ? `%%[ if ${condition} then ]%%\n\n` : `\n\n%%[ elseif ${condition} then ]%%\n\n`)
+                        : (isFirst ? `{% if customer.${condition} %}\n\n` : `\n\n{% elif customer.${condition} %}\n\n`);
                     logicBuffer += `\n${openTag}\n  ${val}\n`; isFirst = false;
                 }
             });
             if (logicBuffer) {
-                if (elseContent) logicBuffer += (syntax === 'ampscript') ? `\n\n%%[ else ]%%\n\n  ${elseContent}\n\n` : `\n\n{% else %}\n\n  ${elseContent}\n`;
+                if (elseContent) logicBuffer += (syntax === 'ampscript')
+                    ? `\n\n%%[ else ]%%\n\n  ${elseContent}\n\n`
+                    : `\n\n{% else %}\n\n  ${elseContent}\n`;
                 logicBuffer += (syntax === 'ampscript') ? `\n\n%%[ endif ]%%\n\n` : `\n\n{% endif %}\n\n`;
                 return (baseContent ? baseContent + "<br><br>" : "") + logicBuffer;
             }
             return baseContent;
         }
+
+        // =====================================================================
+        // generateSmartImageLogic — FIX 2: removed "customer." from AMPScript openTag
+        // =====================================================================
         function generateSmartImageLogic(syntax, prefix) {
             const allKeys = Object.keys(csvData).filter(k => k.startsWith(prefix));
             const distinctTypes = new Set(); let elseType = null;
-            allKeys.forEach(k => { const match = k.match(new RegExp(`^${prefix}_([a-zA-Z0-9]+)_(Desktop|Mobile|Alt)$`)); if (match) { if (match[1] === 'Else' || match[1] === 'Default') elseType = match[1]; else distinctTypes.add(match[1]); } });
-            let validConditions = []; distinctTypes.forEach(type => { if (csvData[`${prefix}_${type}_Desktop`]) validConditions.push(type); });
+            allKeys.forEach(k => {
+                const match = k.match(new RegExp(`^${prefix}_([a-zA-Z0-9_]+?)_(Desktop|Mobile|Alt)$`));
+                if (match) {
+                    if (match[1] === 'Else' || match[1] === 'Default') elseType = match[1];
+                    else distinctTypes.add(match[1]);
+                }
+            });
+            let validConditions = [];
+            distinctTypes.forEach(type => { if (csvData[`${prefix}_${type}_Desktop`]) validConditions.push(type); });
             const genericDesktop = csvData[`${prefix}_Else_Desktop`] || csvData[`${prefix}_Desktop`];
-            const genericMobile = csvData[`${prefix}_Else_Mobile`] || csvData[`${prefix}_Mobile`];
-            const genericAlt = csvData[`${prefix}_Else_Alt`] || csvData[`${prefix}_Alt`];
-            if (validConditions.length === 0) { if (genericDesktop) return buildImgTag(genericDesktop, genericMobile, genericAlt); return "<!-- No images provided -->"; }
+            const genericMobile  = csvData[`${prefix}_Else_Mobile`]  || csvData[`${prefix}_Mobile`];
+            const genericAlt     = csvData[`${prefix}_Else_Alt`]     || csvData[`${prefix}_Alt`];
+            if (validConditions.length === 0) {
+                if (genericDesktop) return buildImgTag(genericDesktop, genericMobile, genericAlt);
+                return "<!-- No images provided -->";
+            }
             let code = ""; let isFirst = true;
             validConditions.forEach(type => {
-                const desktop = csvData[`${prefix}_${type}_Desktop`]; const mobile = csvData[`${prefix}_${type}_Mobile`]; const alt = csvData[`${prefix}_${type}_Alt`];
-                let condition = null; for (let suf in logicMap) { if (type.includes(suf)) { condition = logicMap[suf][syntax === 'ampscript' ? 'amp' : 'jinja']; break; } }
+                const desktop = csvData[`${prefix}_${type}_Desktop`];
+                const mobile  = csvData[`${prefix}_${type}_Mobile`];
+                const alt     = csvData[`${prefix}_${type}_Alt`];
+                let condition = null;
+                for (let suf in logicMap) {
+                    if (type === suf || type.includes(suf)) { condition = logicMap[suf][syntax === 'ampscript' ? 'amp' : 'jinja']; break; }
+                }
                 if (condition) {
                     const tag = buildImgTag(desktop, mobile, alt);
-                    const openTag = (syntax === 'ampscript') ? (isFirst ? `\n%%[ if customer.${condition} then ]%%\n\n` : `\n\n%%[ elseif ${condition} then ]%%\n\n`) : (isFirst ? `\n\n{% if customer.${condition} %}\n\n` : `\n\n{% elif customer.${condition} %}\n\n`);
+                    // ✅ FIX 2: AMPScript uses bare condition (no "customer." prefix)
+                    //           Jinja uses customer. prefix
+                    const openTag = (syntax === 'ampscript')
+                        ? (isFirst ? `\n%%[ if ${condition} then ]%%\n\n` : `\n\n%%[ elseif ${condition} then ]%%\n\n`)
+                        : (isFirst ? `\n\n{% if customer.${condition} %}\n\n` : `\n\n{% elif customer.${condition} %}\n\n`);
                     code += `\n${openTag}\n${tag}\n`; isFirst = false;
                 }
             });
-            if (genericDesktop) { const tag = buildImgTag(genericDesktop, genericMobile, genericAlt); code += (syntax === 'ampscript') ? `\n\n%%[ else ]%%\n\n${tag}\n` : `\n\n{% else %}\n\n${tag}\n`; }
+            if (genericDesktop) {
+                const tag = buildImgTag(genericDesktop, genericMobile, genericAlt);
+                code += (syntax === 'ampscript') ? `\n\n%%[ else ]%%\n\n${tag}\n` : `\n\n{% else %}\n\n${tag}\n`;
+            }
             if (code) code += (syntax === 'ampscript') ? `\n%%[ endif ]%%\n` : `\n{% endif %}\n`;
             return code;
         }
+
         function generateSmartCTALogic(syntax, prefix) {
-            if (csvData[`${prefix}_AccountManager_URL`] || csvData[`${prefix}_OptimizeDeal_URL`] || csvData[`${prefix}_BuildCampaign_URL`]) return generateGrouponComplexCTA(syntax, prefix);
+            if (csvData[`${prefix}_AccountManager_URL`] || csvData[`${prefix}_OptimizeDeal_URL`] || csvData[`${prefix}_BuildCampaign_URL`])
+                return generateGrouponComplexCTA(syntax, prefix);
             const keys = Object.keys(csvData).filter(k => k.startsWith(prefix) && k.endsWith('_URL'));
-            if (keys.length === 1 && keys[0] === prefix + '_URL') { const url = csvData[prefix + '_URL']; if (!url) return ""; return makeBtnHTML(csvData[prefix + '_Text'], url, csvData[prefix + '_Alias']); }
+            if (keys.length === 1 && keys[0] === prefix + '_URL') {
+                const url = csvData[prefix + '_URL'];
+                if (!url) return "";
+                return makeBtnHTML(csvData[prefix + '_Text'], url, csvData[prefix + '_Alias']);
+            }
             let logicBuffer = ""; let elseData = null; let isFirst = true;
             keys.forEach(k => {
                 const type = k.substring(prefix.length + 1, k.lastIndexOf('_URL'));
-                const txt = csvData[`${prefix}_${type}_Text`]; const url = csvData[`${prefix}_${type}_URL`]; const alias = csvData[`${prefix}_${type}_Alias`];
+                const txt   = csvData[`${prefix}_${type}_Text`];
+                const url   = csvData[`${prefix}_${type}_URL`];
+                const alias = csvData[`${prefix}_${type}_Alias`];
                 if (!url) return;
                 if (type === 'Else' || type === 'Default') { elseData = { txt, url, alias }; }
                 else {
-                    let condition = null; for (let suf in logicMap) { if (type.includes(suf)) { condition = logicMap[suf][syntax === 'ampscript' ? 'amp' : 'jinja']; break; } }
+                    let condition = null;
+                    for (let suf in logicMap) {
+                        if (type.includes(suf)) { condition = logicMap[suf][syntax === 'ampscript' ? 'amp' : 'jinja']; break; }
+                    }
                     if (condition) {
                         const btn = makeBtnHTML(txt, url, alias);
-                        const openTag = (syntax === 'ampscript') ? (isFirst ? `\n%%[ if ${condition} then ]%%\n` : `\n%%[ elseif ${condition} then ]%%\n`) : (isFirst ? `\n{% if customer.${condition} %}\n` : `\n{% elif customer.${condition} %}\n`);
+                        const openTag = (syntax === 'ampscript')
+                            ? (isFirst ? `\n%%[ if ${condition} then ]%%\n` : `\n%%[ elseif ${condition} then ]%%\n`)
+                            : (isFirst ? `\n{% if customer.${condition} %}\n` : `\n{% elif customer.${condition} %}\n`);
                         logicBuffer += `\n${openTag}\n\n${btn}\n`; isFirst = false;
                     }
                 }
             });
-            if (logicBuffer) { if (elseData && elseData.url) { const btn = makeBtnHTML(elseData.txt, elseData.url, elseData.alias); logicBuffer += (syntax === 'ampscript') ? `\n%%[ else ]%%\n\n${btn}\n` : `\n{% else %}\n\n${btn}\n`; } logicBuffer += (syntax === 'ampscript') ? `\n%%[ endif ]%%` : `\n{% endif %}`; return logicBuffer; }
+            if (logicBuffer) {
+                if (elseData && elseData.url) {
+                    const btn = makeBtnHTML(elseData.txt, elseData.url, elseData.alias);
+                    logicBuffer += (syntax === 'ampscript') ? `\n%%[ else ]%%\n\n${btn}\n` : `\n{% else %}\n\n${btn}\n`;
+                }
+                logicBuffer += (syntax === 'ampscript') ? `\n%%[ endif ]%%` : `\n{% endif %}`;
+                return logicBuffer;
+            }
             return "";
         }
-function generateGrouponComplexCTA(syntax, prefix) {
-    const btnManager  = makeBtnHTML(csvData[`${prefix}_AccountManager_Text`],  csvData[`${prefix}_AccountManager_URL`],  csvData[`${prefix}_AccountManager_Alias`]);
-    const btnOptimize = makeBtnHTML(csvData[`${prefix}_OptimizeDeal_Text`],     csvData[`${prefix}_OptimizeDeal_URL`],     csvData[`${prefix}_OptimizeDeal_Alias`]);
-    const btnBuild    = makeBtnHTML(csvData[`${prefix}_BuildCampaign_Text`],    csvData[`${prefix}_BuildCampaign_URL`],    csvData[`${prefix}_BuildCampaign_Alias`]);
 
-    // GetStarted solo se usa si tiene URL rellena en el CSV
-    const hasGetStarted = !!csvData[`${prefix}_GetStarted_URL`];
-    const btnGetStarted = hasGetStarted
-        ? makeBtnHTML(csvData[`${prefix}_GetStarted_Text`], csvData[`${prefix}_GetStarted_URL`], csvData[`${prefix}_GetStarted_Alias`])
-        : "";
+        function generateGrouponComplexCTA(syntax, prefix) {
+            const btnManager  = makeBtnHTML(csvData[`${prefix}_AccountManager_Text`], csvData[`${prefix}_AccountManager_URL`], csvData[`${prefix}_AccountManager_Alias`]);
+            const btnOptimize = makeBtnHTML(csvData[`${prefix}_OptimizeDeal_Text`],   csvData[`${prefix}_OptimizeDeal_URL`],   csvData[`${prefix}_OptimizeDeal_Alias`]);
+            const btnBuild    = makeBtnHTML(csvData[`${prefix}_BuildCampaign_Text`],  csvData[`${prefix}_BuildCampaign_URL`],  csvData[`${prefix}_BuildCampaign_Alias`]);
+            const hasGetStarted = !!csvData[`${prefix}_GetStarted_URL`];
+            const btnGetStarted = hasGetStarted
+                ? makeBtnHTML(csvData[`${prefix}_GetStarted_Text`], csvData[`${prefix}_GetStarted_URL`], csvData[`${prefix}_GetStarted_Alias`])
+                : "";
+            if (btnManager === "" && btnOptimize === "" && btnBuild === "") return "";
+            if (syntax === 'ampscript') {
+                const noLiveBlock = hasGetStarted
+                    ? `%%[ if MERCHANT_PERMALINK == '' then ]%%\n\n${btnGetStarted}\n\n%%[ else ]%%\n\n${btnBuild}\n\n%%[ endif ]%%`
+                    : btnBuild;
+                return `%%[ if not empty(ACCOUNT_OWNER_NAME) and ACCOUNT_OWNER_NAME != "House Account" and IndexOf(ACCOUNT_OWNER_NAME,"Merchant") == 0 then ]%%\n\n${btnManager}\n\n%%[ else ]%%\n<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="padding-left:30px; padding-right:30px; padding-top:15px; padding-bottom:20px;"><div style="display:inline-block; width:100%;"><table align="center" border="0" cellpadding="0" cellspacing="0"><tr><td align="center">\n%%[ if HAS_LIVE_DEAL == "True" then ]%%\n\n${btnOptimize}\n\n%%[ else ]%%\n${noLiveBlock}\n%%[\nendif\n]%%\n</td></tr></table></div></td></tr></table>\n%%[ endif ]%%`;
+            } else {
+                const noLiveBlock = hasGetStarted
+                    ? `{% if customer.MERCHANT_PERMALINK == '' %}\n\n${btnGetStarted}\n\n{% else %}\n\n${btnBuild}\n\n{% endif %}`
+                    : btnBuild;
+                return `{% if customer.ACCOUNT_OWNER_NAME and customer.ACCOUNT_OWNER_NAME != "House Account" and "Merchant" not in customer.ACCOUNT_OWNER_NAME %}\n\n${btnManager}\n\n{% else %}\n  {% if customer.HAS_LIVE_DEAL == "True" %}\n\n${btnOptimize}\n\n  {% else %}\n${noLiveBlock}\n  {% endif %}\n{% endif %}`;
+            }
+        }
 
-    if (btnManager === "" && btnOptimize === "" && btnBuild === "") return "";
-
-    if (syntax === 'ampscript') {
-        // Bloque No Live: GetStarted si no tiene permalink, BuildCampaign si lo tiene
-        const noLiveBlock = hasGetStarted
-            ? `%%[ if MERCHANT_PERMALINK == '' then ]%%\n\n${btnGetStarted}\n\n%%[ else ]%%\n\n${btnBuild}\n\n%%[ endif ]%%`
-            : btnBuild;
-
-        return `%%[ if not empty(ACCOUNT_OWNER_NAME) and ACCOUNT_OWNER_NAME != "House Account" and IndexOf(ACCOUNT_OWNER_NAME,"Merchant") == 0 then ]%%\n\n${btnManager}\n\n%%[ else ]%%\n<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="padding-left:30px; padding-right:30px; padding-top:15px; padding-bottom:20px;"><div style="display:inline-block; width:100%;"><table align="center" border="0" cellpadding="0" cellspacing="0"><tr><td align="center">\n%%[ if HAS_LIVE_DEAL == "True" then ]%%\n\n${btnOptimize}\n\n%%[ else ]%%\n${noLiveBlock}\n%%[\nendif\n]%%\n</td></tr></table></div></td></tr></table>\n%%[ endif ]%%`;
-    } else {
-        const noLiveBlock = hasGetStarted
-            ? `{% if customer.MERCHANT_PERMALINK == '' %}\n\n${btnGetStarted}\n\n{% else %}\n\n${btnBuild}\n\n{% endif %}`
-            : btnBuild;
-
-        return `{% if customer.ACCOUNT_OWNER_NAME and customer.ACCOUNT_OWNER_NAME != "House Account" and "Merchant" not in customer.ACCOUNT_OWNER_NAME %}\n\n${btnManager}\n\n{% else %}\n  {% if customer.HAS_LIVE_DEAL == "True" %}\n\n${btnOptimize}\n\n  {% else %}\n${noLiveBlock}\n  {% endif %}\n{% endif %}`;
-    }
-}
-        function buildImgTag(d, m, alt) { if (!d) return ""; const mSrc = m || d; return `<!-- DESKTOP -->\n<img src="${d}" alt="${alt || ''}" border="0" class="em_img em_hide" style="display:block; border-radius:10px;" width="600">\n\n<!--[if !mso]><!-->\n<!-- MOBILE -->\n<div class="imghide" style="max-height:0px; font-size:0; display:none; overflow:hidden;">\n\n<img src="${mSrc}" alt="${alt || ''}" border="0" class="imghide em_img em_center" height="0" width="0" style="border-radius:10px;">\n\n</div><!--<![endif]-->`; }
+        function buildImgTag(d, m, alt) {
+            if (!d) return "";
+            const mSrc = m || d;
+            return `<!-- DESKTOP -->\n<img src="${d}" alt="${alt || ''}" border="0" class="em_img em_hide" style="display:block; border-radius:10px;" width="600">\n\n<!--[if !mso]><!-->\n<!-- MOBILE -->\n<div class="imghide" style="max-height:0px; font-size:0; display:none; overflow:hidden;">\n\n<img src="${mSrc}" alt="${alt || ''}" border="0" class="imghide em_img em_center" height="0" width="0" style="border-radius:10px;">\n\n</div><!--<![endif]-->`;
+        }
 
         function makeBtnHTML(text, url, alias) {
-            if (!url) return ""; return `<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="line-height:18px; padding-left:30px; padding-right:30px; padding-top:15px; padding-bottom:20px;"><div style="display:inline-block; width:100%; word-wrap:break-word; overflow-wrap:break-word;"><table align="center" border="0" cellpadding="0" cellspacing="0"><tr><td align="center">
+            if (!url) return "";
+            return `<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="line-height:18px; padding-left:30px; padding-right:30px; padding-top:15px; padding-bottom:20px;"><div style="display:inline-block; width:100%; word-wrap:break-word; overflow-wrap:break-word;"><table align="center" border="0" cellpadding="0" cellspacing="0"><tr><td align="center">
         <table border="0" cellpadding="20" cellspacing="0"><tr><td align="center" bgcolor="#008A22" style="font-size:18px; line-height:26px; font-weight:bold; font-family:'Open Sans',Arial,sans-serif; color:#ffffff; padding:12px 35px; border-radius:25px; border-style:none;">\n\n<a href="${url}" style="color:#ffffff; text-decoration:none;" alias="${alias || 'CTA'}">${text || 'Click Here'}</a>\n\n</td></tr></table></td></tr></table></div></td></tr></table>`;
         }
 
-        function wrapInImageTable(content, pt, pb) { return `<table align="center" border="0" cellpadding="0" cellspacing="0" class="em_wrapper" style="width:600px;" width="600">\n<tr><td align="center" valign="top" style="padding-top:${pt}; padding-bottom:${pb};">\n\n${content}\n\n</td></tr></table>`; }
+        function wrapInImageTable(content, pt, pb) {
+            return `<table align="center" border="0" cellpadding="0" cellspacing="0" class="em_wrapper" style="width:600px;" width="600">\n<tr><td align="center" valign="top" style="padding-top:${pt}; padding-bottom:${pb};">\n\n${content}\n\n</td></tr></table>`;
+        }
 
-        function wrapInTable(content) { if (!content || content.trim() === "") return ""; return `<table width="100%" cellpadding="0" cellspacing="0" border="0">\n<tr><td align="center" valign="top" style="padding-left:15px; padding-right:15px; padding-top:9px; padding-bottom:15px; font-size:16px; line-height:24px;">\n<div style="text-align:left; font-size:16px; line-height:24px; font-family:'Open Sans',Helvetica,Arial,sans-serif; color:#230F33; font-weight:normal;">\n\n${content}\n\n</div>\n</td></tr>\n</table>`; }
+        function wrapInTable(content) {
+            if (!content || content.trim() === "") return "";
+            return `<table width="100%" cellpadding="0" cellspacing="0" border="0">\n<tr><td align="center" valign="top" style="padding-left:15px; padding-right:15px; padding-top:9px; padding-bottom:15px; font-size:16px; line-height:24px;">\n<div style="text-align:left; font-size:16px; line-height:24px; font-family:'Open Sans',Helvetica,Arial,sans-serif; color:#230F33; font-weight:normal;">\n\n${content}\n\n</div>\n</td></tr>\n</table>`;
+        }
 
         function generateBulletsLogic() {
-            const title = csvData['Bullets_Paragraph']; if (!title && !csvData['Bullets_1']) return "";
-            let listItems = ""; for (let i = 1; i <= 10; i++) { const bText = csvData[`Bullets_${i}`]; if (bText) listItems += `                    <li style="padding-top:4px;">\n                        ${bText} </li>\n`; }
+            const title = csvData['Bullets_Paragraph'];
+            if (!title && !csvData['Bullets_1']) return "";
+            let listItems = "";
+            for (let i = 1; i <= 10; i++) {
+                const bText = csvData[`Bullets_${i}`];
+                if (bText) listItems += `                    <li style="padding-top:4px;">\n                        ${bText} </li>\n`;
+            }
             return `<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" valign="top" style="padding-left:15px; padding-right:15px; padding-top:9px; padding-bottom:0px; font-size:16px; line-height:24px;"><div style="text-align:left; font-size:16px; line-height:24px; font-family:'Open Sans',Arial,sans-serif; color:#230F33; font-weight:normal;"><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="left" valign="top" style="font-size:20px; line-height:28px;"><div style="text-align:left; font-size:20px; line-height:28px; font-family:'DM Serif Display',Arial,sans-serif; color:#230F33; font-weight:bold;">\n\n${title || ""}\n\n</div></td></tr></table><ul style="margin:0px; padding-bottom:9px; padding-top:10px">\n\n${listItems}\n\n</ul></div></td></tr></table>`;
         }
 
-
-        const emailTemplateTop = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html style="padding:0;margin:0;opacity:1;" xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:v="urn:schemas-microsoft-com:vml">
-<head>
-    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Groupon Merchant</title>
-    <style type="text/css">
-        html { -webkit-text-size-adjust: none; }
-        body { margin: 0 !important; padding: 0 !important; -webkit-text-size-adjust: 100% !important; -ms-text-size-adjust: 100% !important; -webkit-font-smoothing: antialiased !important; }
-        img { border: 0 !important; outline: none !important; }
-        p { margin: 0px !important; padding: 0px !important; }
-        table { border-collapse: collapse; mso-table-lspace: 0px; mso-table-rspace: 0px; }
-        td, a, span { border-collapse: collapse; mso-line-height-rule: exactly; }
-        .imghide { max-height: 0px; font-size: 0; display: none; overflow: hidden; }
-        @media only screen and (max-width: 480px) {
-            .em_main_table { width: 100% !important; }
-            .em_wrapper { width: 100% !important; }
-            .em_hide { display: none !important; }
-            .mobile_hide { display: none !important; visibility: hidden !important; height: 0 !important; width: 0 !important; }
-            .imghide { max-height: none !important; font-size: 12px !important; display: block !important; overflow: visible !important; }
-            .em_img { width: 100% !important; height: auto !important; }
-        }
-    </style>
-</head>
-<body class="em_body" style="margin:0;padding:0;word-spacing:normal;background-color:#ffffff;">
-    <div role="article" aria-roledescription="email" style="-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;background-color:#ffffff;">
-        <table bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0" class="em_full_wrap" width="100%">
-            <tr>
-                <td align="center" valign="top">
-                    <table align="center" border="0" cellpadding="0" cellspacing="0" class="em_main_table" style="width:600px; table-layout:fixed;" width="600">
-                        <tr>
-                            <td align="center" valign="top">
-                                <table align="center" border="0" cellpadding="0" cellspacing="0" class="em_wrapper" style="width:600px;" width="600">
-                                    <tr>
-                                        <td align="center" valign="top">
-                                            <!-- ID CONTENT TABLE -->
-                                            <table align="center" border="0" cellpadding="0" cellspacing="0" class="em_wrapper" style="width:600px;" width="600" id="CONTENT">
-                                                <!-- HEADER ROW -->
-                                                <tr>
-                                                    <td align="center" style="padding-left:15px; padding-right:15px; padding-top:10px; padding-bottom:15px;" class="toppad15">
-                                                        <table width="100%" align="center" border="0" cellpadding="0" cellspacing="0">
-                                                            <tr>
-                                                                <td align="left" class="wrap width100 center">
-                                                                    <img src="https://image.mc.groupon.com/lib/fe3e157075640475711070/m/1/GrouponMerchantLogo_2025.png" style="display:block;" class="em_img centercenter" alt="Groupon Merchant" width="285">
-                                                                </td>
-                                                                <td align="right" class="mobile_hide" style="font-size:18px; line-height:22px;">
-                                                                    <div style="font-family:'Open Sans',Arial,sans-serif; font-size:18px; line-height:22px; color:#230F33;">
-                                                                        <a href="%%=RedirectTo(v(@urlMerchantCenter))=%%" style="color:#230F33; text-decoration:none;">Merchant Center</a>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        </table>
-                                                    </td>
-                                                </tr>
-                                                <!-- END HEADER ROW -->
-
-                                                <!-- DYNAMIC BLOCKS START HERE -->`;
-
-        const emailTemplateBottom = `
-                                                <!-- DYNAMIC BLOCKS END HERE -->
-                                            </table>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-        </table>
-    </div>
-    <custom name="opencounter" type="tracking" />
-</body>
-</html>`;
-
-        const resizerVert = document.getElementById('dragHandleVertical');
-        const topPane = document.getElementById('topPane');
-        const bottomPane = document.getElementById('bottomPane');
-        const fullBody = document.getElementById('fullBodyGroup');
-        let isResizingVert = false;
-
         function generateFullHTML() {
             const blocks = document.querySelectorAll('.block-container');
-            let contentHtml = "";
-            let subjectTxt = "";
-            let preheaderTxt = "";
-
+            let contentHtml = "", subjectTxt = "", preheaderTxt = "";
             blocks.forEach(block => {
                 const title = block.querySelector('.block-title span').innerText;
                 const body = block.querySelector('.block-body');
                 const textArea = block.querySelector('textarea');
                 let code = textArea.value.trim();
-
-                if (title.includes("Subject Line")) {
-                    subjectTxt = code;
-                } else if (title.includes("Preheader")) {
-                    preheaderTxt = code;
-                }
+                if (title.includes("Subject Line")) { subjectTxt = code; }
+                else if (title.includes("Preheader")) { preheaderTxt = code; }
                 else if (!body.classList.contains('collapsed') && code) {
-                    contentHtml += `
-                    <!-- BLOQUE: ${title} -->
-                    <tr><td align="center" valign="top">${code}</td></tr>`;
+                    contentHtml += `\n                    <!-- BLOQUE: ${title} -->\n                    <tr><td align="center" valign="top">${code}</td></tr>`;
                 }
             });
 
@@ -1217,11 +1088,8 @@ function generateGrouponComplexCTA(syntax, prefix) {
         </table>
     </td>
 </tr>`;
-
             const emailBottom = `</table></td></tr></table></body></html>`;
-
             const finalHtmlBody = emailTop + contentHtml + emailBottom;
-
             const textForClipboard = `Subject: ${subjectTxt}\nPreheader: ${preheaderTxt}\n\n${finalHtmlBody}`;
 
             const textarea = document.getElementById('fullHtmlTextarea');
@@ -1229,53 +1097,9 @@ function generateGrouponComplexCTA(syntax, prefix) {
 
             const iframe = document.getElementById('htmlPreviewFrame');
             const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-            const visualHeader = `
-                <div style="background:#f0f0f0; padding:15px; border-bottom:1px solid #ccc; font-family:sans-serif; font-size:14px; color:#333; margin-bottom:20px;">
-                    <div style="margin-bottom:5px;"><strong>Subject:</strong> ${subjectTxt}</div>
-                    <div><strong>Preheader:</strong> ${preheaderTxt}</div>
-                </div>`;
-
-            doc.open();
-            doc.write(visualHeader + finalHtmlBody);
-            doc.close();
-
-            // Mostrar Panel
+            const visualHeader = `<div style="background:#f0f0f0; padding:15px; border-bottom:1px solid #ccc; font-family:sans-serif; font-size:14px; color:#333; margin-bottom:20px;"><div style="margin-bottom:5px;"><strong>Subject:</strong> ${subjectTxt}</div><div><strong>Preheader:</strong> ${preheaderTxt}</div></div>`;
+            doc.open(); doc.write(visualHeader + finalHtmlBody); doc.close();
             document.getElementById('fullHtmlContainer').style.display = 'flex';
-        }
-
-        function updateFullPreview() {
-            const val = document.getElementById('fullHtmlTextarea').value;
-            const iframe = document.getElementById('htmlPreviewFrame');
-            const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-            let htmlContent = "";
-            let headerContent = "";
-
-            const docTypeIndex = val.indexOf('<!DOCTYPE');
-
-            if (docTypeIndex > -1) {
-                htmlContent = val.substring(docTypeIndex);
-
-                const textPart = val.substring(0, docTypeIndex).trim();
-
-                if (textPart) {
-                    const formattedText = textPart
-                        .replace(/\n/g, '<br>')
-                        .replace(/(Subject:|Preheader:)/g, '<strong>$1</strong>');
-
-                    headerContent = `
-                    <div style="background:#f0f0f0; padding:15px; border-bottom:1px solid #ccc; font-family:sans-serif; font-size:14px; color:#333; margin-bottom:20px;">
-                        ${formattedText}
-                    </div>`;
-                }
-            } else {
-                htmlContent = val;
-            }
-
-            doc.open();
-            doc.write(headerContent + htmlContent);
-            doc.close();
         }
 
         function updateFullPreview() {
@@ -1283,19 +1107,18 @@ function generateGrouponComplexCTA(syntax, prefix) {
             let htmlPart = val;
             const docTypeIndex = val.indexOf('<!DOCTYPE');
             const htmlTagIndex = val.indexOf('<html');
-
-            if (docTypeIndex > -1) {
-                htmlPart = val.substring(docTypeIndex);
-            } else if (htmlTagIndex > -1) {
-                htmlPart = val.substring(htmlTagIndex);
-            }
-
+            if (docTypeIndex > -1) { htmlPart = val.substring(docTypeIndex); }
+            else if (htmlTagIndex > -1) { htmlPart = val.substring(htmlTagIndex); }
             const iframe = document.getElementById('htmlPreviewFrame');
             const doc = iframe.contentDocument || iframe.contentWindow.document;
-            doc.open();
-            doc.write(htmlPart);
-            doc.close();
+            doc.open(); doc.write(htmlPart); doc.close();
         }
+
+        const resizerVert = document.getElementById('dragHandleVertical');
+        const topPane = document.getElementById('topPane');
+        const bottomPane = document.getElementById('bottomPane');
+        const fullBody = document.getElementById('fullBodyGroup');
+        let isResizingVert = false;
 
         resizerVert.addEventListener('mousedown', (e) => {
             isResizingVert = true;
@@ -1305,15 +1128,11 @@ function generateGrouponComplexCTA(syntax, prefix) {
 
         document.addEventListener('mousemove', (e) => {
             if (!isResizingVert) return;
-
             const containerRect = fullBody.getBoundingClientRect();
             let newTopHeight = e.clientY - containerRect.top;
-
             if (newTopHeight < 100) newTopHeight = 100;
             if (newTopHeight > containerRect.height - 100) newTopHeight = containerRect.height - 100;
-
             const percentage = (newTopHeight / containerRect.height) * 100;
-
             topPane.style.flex = `0 0 ${percentage}%`;
             bottomPane.style.flex = `1 1 0`;
         });
@@ -1335,10 +1154,6 @@ function generateGrouponComplexCTA(syntax, prefix) {
         function closeFullView() {
             document.getElementById('fullHtmlContainer').style.display = 'none';
         }
-
-
     </script>
 </body>
-
 </html>
-
